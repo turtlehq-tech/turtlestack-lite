@@ -1,0 +1,128 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Run security scan daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  secret-detection:
+    name: Advanced Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for comprehensive scanning
+      
+      - name: Run TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: master
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  dependency-check:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run dependency check
+        run: |
+          echo "🔍 Checking for vulnerable dependencies..."
+          npm audit --audit-level=low
+          
+      - name: Generate security report
+        run: |
+          echo "📊 Generating security report..."
+          npm audit --json > security-report.json || true
+          
+      - name: Upload security report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-report
+          path: security-report.json
+
+  codeql-analysis:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+        
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  docker-security:
+    name: Docker Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Docker image (if Dockerfile exists)
+        run: |
+          if [ -f "Dockerfile" ]; then
+            docker build -t turtlestack-security-test .
+            
+            # Run Trivy security scanner
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v $PWD:/tmp/trivy aquasec/trivy image --exit-code 1 \
+              --severity HIGH,CRITICAL turtlestack-security-test
+          else
+            echo "ℹ️ No Dockerfile found, skipping Docker security scan"
+          fi
+
+  license-check:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install license checker
+        run: npm install -g license-checker
+        
+      - name: Check licenses
+        run: |
+          echo "📜 Checking dependency licenses..."
+          license-checker --summary
+          
+          # Check for problematic licenses
+          license-checker --failOn 'GPL;AGPL;LGPL;CPAL;EPL;MPL;CC'

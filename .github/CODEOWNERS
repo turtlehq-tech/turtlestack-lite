@@ -1,0 +1,36 @@
+# TurtleStack Trading MCP Server - Code Owners
+# 
+# This file defines who owns and must review changes to specific parts of the codebase.
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership - all files require review from @ShubhamAgr
+* @ShubhamAgr
+
+# Broker implementations - critical trading logic
+/src/brokers/ @ShubhamAgr
+
+# Server core - authentication and session management
+/src/server/ @ShubhamAgr
+/src/utils/SessionManager.js @ShubhamAgr
+
+# Cloudflare Workers deployment - production environment
+/cloudflare/ @ShubhamAgr
+
+# Security-sensitive configuration files
+/.github/ @ShubhamAgr
+/claude-desktop-config.json @ShubhamAgr
+/mcp-config-for-claude.json @ShubhamAgr
+
+# Test files - ensure quality and security
+/tests/ @ShubhamAgr
+
+# Documentation that affects security setup
+/README.md @ShubhamAgr
+/AUTHENTICATION_GUIDE.md @ShubhamAgr
+
+# Package management - dependency security
+/package.json @ShubhamAgr
+/package-lock.json @ShubhamAgr
+
+# Wrangler configuration - Cloudflare deployment security
+/cloudflare/wrangler*.toml @ShubhamAgr
