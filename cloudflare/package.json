@@ -1,0 +1,33 @@
+{
+  "name": "turtlestack-mcp-cloudflare-worker",
+  "version": "2.0.0",
+  "description": "TurtleStack MCP Server for Cloudflare Workers - Multi-broker trading platform",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "kv:create": "wrangler kv:namespace create SESSIONS_KV",
+    "kv:create:preview": "wrangler kv:namespace create SESSIONS_KV --preview",
+    "logs": "wrangler tail --format=pretty"
+  },
+  "keywords": [
+    "trading",
+    "mcp",
+    "kite",
+    "groww",
+    "dhan",
+    "cloudflare",
+    "workers"
+  ],
+  "author": "TurtleStack Team",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

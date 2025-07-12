@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "turtlestack-trading": {
+      "command": "node",
+      "args": [
+        "-e",
+        "const { Server } = require('@modelcontextprotocol/sdk/server/index.js'); const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js'); const server = new Server({ name: 'turtlestack-trading', version: '2.0.0' }, { capabilities: { tools: {} } }); const baseURL = 'https://your-worker.your-subdomain.workers.dev'; let sessionId = null; server.setRequestHandler('tools/list', async () => { const response = await fetch(`${baseURL}/mcp/tools`); const data = await response.json(); return data; }); server.setRequestHandler('tools/call', async (request) => { if (!sessionId) { const sessionResponse = await fetch(`${baseURL}/session/create`, { method: 'POST' }); const sessionData = await sessionResponse.json(); sessionId = sessionData.sessionId; } const response = await fetch(`${baseURL}/mcp/call`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Session-ID': sessionId }, body: JSON.stringify({ tool: request.params.name, arguments: request.params.arguments }) }); const data = await response.json(); return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] }; }); const transport = new StdioServerTransport(); server.connect(transport);"
+      ],
+      "env": {
+        "WORKER_URL": "https://your-worker.your-subdomain.workers.dev"
+      }
+    }
+  }
+}

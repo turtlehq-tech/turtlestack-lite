@@ -1,0 +1,30 @@
+{
+    "name": "my-kite-mcp-server",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Unified Multi-Broker Trading MCP Server with modular architecture",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "start:kite": "node server.js",
+        "start:groww": "node groww-server.js",
+        "start:unified-old": "node unified-trading-server.js",
+        "dev": "nodemon src/index.js",
+        "dev:kite": "nodemon server.js",
+        "dev:groww": "nodemon groww-server.js",
+        "dev:unified-old": "nodemon unified-trading-server.js",
+        "test": "node --test tests/**/*.test.js",
+        "test:unit": "node --test tests/unit/**/*.test.js",
+        "test:integration": "node --test tests/integration/**/*.test.js",
+        "test:watch": "node --test --watch tests/**/*.test.js"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^0.5.0",
+        "axios": "^1.7.9",
+        "dotenv": "^16.3.1",
+        "uuid": "^11.1.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.0"
+    }
+}

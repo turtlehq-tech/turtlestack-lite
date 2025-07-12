@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "turtlestack-trading-cloudflare": {
+      "command": "node",
+      "args": ["-e", "const https = require('https'); const http = require('http'); const url = require('url'); const path = require('path'); const fs = require('fs'); const express = require('express'); const app = express(); app.use(express.json()); const WORKER_URL = 'https://YOUR_WORKER_SUBDOMAIN.YOUR_USERNAME.workers.dev'; let currentSessionId = null; async function makeWorkerRequest(endpoint, method = 'GET', data = null) { const options = { method, headers: { 'Content-Type': 'application/json' } }; if (currentSessionId) { options.headers['X-Session-ID'] = currentSessionId; } if (data) { options.body = JSON.stringify(data); } const response = await fetch(WORKER_URL + endpoint, options); return await response.json(); } async function ensureSession() { if (!currentSessionId) { const result = await makeWorkerRequest('/session/create', 'POST'); currentSessionId = result.sessionId; } } process.stdin.on('data', async (chunk) => { try { const message = JSON.parse(chunk.toString()); if (message.method === 'tools/list') { const tools = await makeWorkerRequest('/mcp/tools'); process.stdout.write(JSON.stringify({id: message.id, result: tools}) + '\\n'); } else if (message.method === 'tools/call') { await ensureSession(); const result = await makeWorkerRequest('/mcp/call', 'POST', {tool: message.params.name, arguments: message.params.arguments}); process.stdout.write(JSON.stringify({id: message.id, result}) + '\\n'); } } catch (error) { process.stdout.write(JSON.stringify({id: message.id, error: {code: -1, message: error.message}}) + '\\n'); } });"
+      ]
+    }
+  }
+}

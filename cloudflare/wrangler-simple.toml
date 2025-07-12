@@ -1,0 +1,29 @@
+name = "turtle-stack-free"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Free tier optimized settings
+[limits]
+cpu_ms = 10000
+
+[vars]
+NODE_ENV = "production"
+DEBUG_MODE = "false"
+SESSION_TIMEOUT_MS = "3600000"
+MAX_CONCURRENT_SESSIONS = "50"
+
+# Environment-specific configurations
+[env.production]
+name = "turtle-stack-free"
+
+[env.production.vars]
+NODE_ENV = "production"
+DEBUG_MODE = "false"
+
+[env.staging]
+name = "turtle-stack-free-staging"
+
+[env.staging.vars]
+NODE_ENV = "staging"
+DEBUG_MODE = "true"

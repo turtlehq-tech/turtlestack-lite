@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "turtlestack-trading-local": {
+      "command": "node",
+      "args": ["/Users/shubham/Desktop/my-kite-mcp-server/src/index.js"]
+    },
+    "turtlestack-trading-cloud": {
+      "command": "node",
+      "args": ["/Users/shubham/Desktop/my-kite-mcp-server/bridge.js"]
+    }
+  }
+}

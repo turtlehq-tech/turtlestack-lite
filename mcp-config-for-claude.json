@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "turtlestack-trading": {
+      "command": "node",
+      "args": ["/Users/shubham/Desktop/my-kite-mcp-server/src/index.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
