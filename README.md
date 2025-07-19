@@ -35,17 +35,26 @@ npm start
 
 ### Claude AI Configuration
 
-The unified server supports all brokers (Kite, Groww, Dhan) with advanced technical analysis and modular architecture.
+Add this configuration to your Claude Desktop settings (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 ```json
 {
   "mcpServers": {
-    "unified-trading-server": {
-      "command": "/Users/shubham/.nvm/versions/node/v22.15.0/bin/node",
-      "args": ["/Users/shubham/Desktop/my-kite-mcp-server/src/index.js"]
+    "turtlestack-lite": {
+      "command": "node",
+      "args": ["/path/to/turtlestack-lite/src/index.js"]
     }
   }
 }
+```
+
+**Replace `/path/to/turtlestack-lite/` with your actual installation path:**
+
+```bash
+# Example paths:
+# macOS: "/Users/yourusername/Projects/turtlestack-lite/src/index.js"
+# Linux: "/home/yourusername/turtlestack-lite/src/index.js"  
+# Windows: "C:\\Users\\yourusername\\turtlestack-lite\\src\\index.js"
 ```
 
 **🔒 Security Note**: No API keys or secrets are stored in the configuration. All credentials must be provided through Claude commands for maximum security.
