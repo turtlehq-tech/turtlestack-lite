@@ -87,8 +87,8 @@ export class GrowwBroker extends BaseBroker {
   // Portfolio & Positions
   async getPortfolio(params = {}) {
     try {
-      // Note: Portfolio endpoint not in docs - may need to use /margins/detail/user for funds
-      const response = await this.makeAPICall('GET', '/margins/detail/user');
+      // Get holdings from DEMAT account
+      const response = await this.makeAPICall('GET', '/holdings/user');
       
       return {
         broker: 'Groww',
@@ -101,8 +101,10 @@ export class GrowwBroker extends BaseBroker {
 
   async getPositions(params = {}) {
     try {
-      // Positions would be available through order list with appropriate filters
-      const response = await this.makeAPICall('GET', '/order/list?segment=CASH');
+      // Get user positions with optional segment filter
+      const segment = params.segment || 'CASH';
+      const queryParams = segment ? `?segment=${segment}` : '';
+      const response = await this.makeAPICall('GET', `/positions/user${queryParams}`);
       
       return {
         broker: 'Groww',
@@ -110,6 +112,24 @@ export class GrowwBroker extends BaseBroker {
       };
     } catch (error) {
       throw new Error(`Failed to get Groww positions: ${error.message}`);
+    }
+  }
+
+  async getPositionBySymbol(tradingSymbol, segment = 'CASH') {
+    try {
+      const queryParams = new URLSearchParams({
+        trading_symbol: tradingSymbol,
+        segment: segment
+      });
+      
+      const response = await this.makeAPICall('GET', `/positions/trading-symbol?${queryParams.toString()}`);
+      
+      return {
+        broker: 'Groww',
+        data: response
+      };
+    } catch (error) {
+      throw new Error(`Failed to get Groww position for ${tradingSymbol}: ${error.message}`);
     }
   }
 
@@ -168,13 +188,13 @@ export class GrowwBroker extends BaseBroker {
     try {
       const modifyData = {
         groww_order_id: orderId,
-        segment: params.segment || 'CASH'
+        segment: params.segment || 'CASH',
+        order_type: params.order_type ? params.order_type.toUpperCase() : 'LIMIT'
       };
 
       if (params.quantity) modifyData.quantity = parseInt(params.quantity);
       if (params.price) modifyData.price = parseFloat(params.price);
       if (params.trigger_price) modifyData.trigger_price = parseFloat(params.trigger_price);
-      if (params.order_type) modifyData.order_type = params.order_type.toUpperCase();
       if (params.validity) modifyData.validity = params.validity.toUpperCase();
 
       const response = await this.makeAPICall('POST', '/order/modify', modifyData);
@@ -447,12 +467,12 @@ export class GrowwBroker extends BaseBroker {
       
       const historicalData = await this.getHistoricalData(symbol, startTime, endTime, exchange, segment);
       
-      if (!historicalData.data || !Array.isArray(historicalData.data)) {
+      if (!historicalData.data || !historicalData.data.candles || !Array.isArray(historicalData.data.candles)) {
         throw new Error('No historical data available for indicator calculation');
       }
       
       // Calculate the requested indicator
-      const calculatedIndicator = this._calculateIndicator(historicalData.data, indicator, period);
+      const calculatedIndicator = this._calculateIndicator(historicalData.data.candles, indicator, period);
       
       return {
         broker: 'Groww',
@@ -673,9 +693,9 @@ export class GrowwBroker extends BaseBroker {
   }
 
   _generateOrderReferenceId() {
-    const timestamp = Date.now().toString();
+    const timestamp = Date.now().toString().slice(-10); // Last 10 digits
     const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `TT-${timestamp}-${randomSuffix}`;
+    return `${timestamp}${randomSuffix}`; // 14 chars, no hyphens
   }
 
   _mapSegment(segment) {
