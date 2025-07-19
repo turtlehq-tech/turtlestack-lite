@@ -395,3 +395,11 @@ To add a new broker (e.g., Upstox):
 5. **Test**: Authenticate and test all operations
 
 The modular architecture makes adding new brokers straightforward and maintainable.
+
+## 📁 Cloudflare Workers Deployment
+
+For deploying to Cloudflare Workers, see the complete setup guide in `/cloudflare/README.md`.
+
+## 📄 License
+
+Apache 2.0 License - see LICENSE file for details.
