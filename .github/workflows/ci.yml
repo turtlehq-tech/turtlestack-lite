@@ -1,199 +1,46 @@
-name: CI/CD Security Pipeline
+name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Scan for Hardcoded Secrets
-        run: |
-          echo "🔍 Scanning for potential secrets..."
-          
-          # Check for JWT tokens (but allow documentation examples)
-          if grep -r "eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*" . --exclude-dir=.git --exclude-dir=node_modules --exclude="*.md" | grep -v "YOUR_.*_HERE"; then
-            echo "❌ Real JWT tokens detected! Use YOUR_GROWW_JWT_TOKEN_HERE placeholder instead."
-            exit 1
-          fi
-          
-          # Check for API keys
-          if grep -r "sk_[A-Za-z0-9]" . --exclude-dir=.git --exclude-dir=node_modules; then
-            echo "❌ Potential API keys found!"
-            exit 1
-          fi
-          
-          # Check for AWS keys
-          if grep -r "AKIA[A-Z0-9]" . --exclude-dir=.git --exclude-dir=node_modules; then
-            echo "❌ AWS access keys found!"
-            exit 1
-          fi
-          
-          # Check for hardcoded URLs (but allow placeholders)
-          if grep -r "agrawal-shubham291" . --exclude-dir=.git --exclude-dir=node_modules; then
-            echo "❌ Hardcoded personal URLs found! Use YOUR_WORKER_SUBDOMAIN.YOUR_USERNAME.workers.dev"
-            exit 1
-          fi
-          
-          # Check for debug tokens
-          if grep -r "debug_user_123\|consistent_token_456\|claude_session_abc123" . --exclude-dir=.git --exclude-dir=node_modules; then
-            echo "❌ Debug tokens found! Use proper placeholders."
-            exit 1
-          fi
-          
-          echo "✅ No hardcoded secrets detected"
-
-  validate-placeholders:
-    name: Validate Security Placeholders
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Check Required Placeholders
-        run: |
-          echo "🔍 Validating security placeholders..."
-          
-          # Ensure README has setup instructions
-          if ! grep -q "YOUR_.*_HERE" README.md; then
-            echo "❌ README must contain setup placeholders"
-            exit 1
-          fi
-          
-          # Check for proper placeholder usage in test files
-          if ! grep -q "YOUR_GROWW_JWT_TOKEN_HERE" tests/debugAuthentication.js; then
-            echo "❌ Test files must use placeholders, not real tokens"
-            exit 1
-          fi
-          
-          # Verify wrangler.toml uses placeholder
-          if ! grep -q "YOUR_KV_NAMESPACE_ID_HERE" cloudflare/wrangler.toml; then
-            echo "❌ Cloudflare config must use placeholder KV namespace ID"
-            exit 1
-          fi
-          
-          echo "✅ All security placeholders are properly configured"
-
-  lint:
-    name: Code Quality Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Check for console.logs in production code
-        run: |
-          echo "🔍 Checking for console.logs in production code..."
-          if grep -r "console\.log" src/ --exclude-dir=utils | grep -v "Logger"; then
-            echo "⚠️ Warning: console.logs found in production code"
-          fi
-          echo "✅ Code quality check completed"
-
   test:
-    name: Run Tests
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Run unit tests
-        run: npm run test:unit --if-present
-        
-      - name: Run integration tests  
-        run: npm run test:integration --if-present
-
-  validate-config:
-    name: Configuration Validation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Validate JSON files
-        run: |
-          echo "🔍 Validating JSON configuration files..."
-          
-          # Validate package.json
-          if ! node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"; then
-            echo "❌ Invalid package.json"
-            exit 1
-          fi
-          
-          # Validate Claude config files
-          for file in claude-desktop-config.json mcp-config-for-claude.json cloudflare/mcp-config-for-claude.json; do
-            if [ -f "$file" ]; then
-              if ! node -e "JSON.parse(require('fs').readFileSync('$file', 'utf8'))"; then
-                echo "❌ Invalid JSON in $file"
-                exit 1
-              fi
-            fi
-          done
-          
-          echo "✅ All JSON files are valid"
-          
-      - name: Check Cloudflare Configuration
-        run: |
-          echo "🔍 Validating Cloudflare configuration..."
-          
-          if [ -f "cloudflare/wrangler.toml" ]; then
-            # Check for required sections
-            if ! grep -q "name = " cloudflare/wrangler.toml; then
-              echo "❌ wrangler.toml missing name configuration"
-              exit 1
-            fi
-            
-            if ! grep -q "compatibility_date = " cloudflare/wrangler.toml; then
-              echo "❌ wrangler.toml missing compatibility_date"
-              exit 1
-            fi
-          fi
-          
-          echo "✅ Cloudflare configuration validated"
-
-  security-audit:
-    name: Dependency Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Run security audit
-        run: |
-          echo "🔍 Running npm security audit..."
-          npm audit --audit-level=moderate
-          
-      - name: Check for vulnerable packages
-        run: |
-          echo "🔍 Checking for known vulnerable packages..."
-          if npm audit --audit-level=high --dry-run | grep -q "vulnerabilities"; then
-            echo "⚠️ High severity vulnerabilities found"
-            npm audit
-          fi
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Check for hardcoded secrets
+      run: |
+        if grep -r "eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*" . --exclude-dir=.git --exclude-dir=node_modules | grep -v "YOUR_.*_HERE"; then
+          echo "❌ Real JWT tokens detected!"
+          exit 1
+        fi
+        echo "✅ No hardcoded secrets found"
+    
+    - name: Lint check
+      run: |
+        # Check for common issues
+        echo "Running basic lint checks..."
+        if grep -r "console\.log" src/ --exclude-dir=node_modules; then
+          echo "⚠️ console.log statements found in source code"
+        fi

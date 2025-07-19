@@ -1,90 +1,44 @@
-# Pull Request
+## Description
+Brief description of what this PR does.
 
-## 📋 Description
-<!-- Provide a brief description of the changes -->
-
-## 🔄 Type of Change
-<!-- Mark the appropriate option with an "x" -->
-- [ ] 🐛 Bug fix (non-breaking change that fixes an issue)
-- [ ] ✨ New feature (non-breaking change that adds functionality)
+## Type of Change
+- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
+- [ ] ✨ New feature (non-breaking change which adds functionality)
 - [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] 📚 Documentation update
-- [ ] 🔧 Configuration change
-- [ ] 🧪 Test improvement
-- [ ] 🔒 Security enhancement
+- [ ] 🎨 Code style update (formatting, renaming)
+- [ ] ♻️ Refactoring (no functional changes)
+- [ ] ⚡ Performance improvements
+- [ ] 🧪 Test updates
 
-## 🧪 Testing
-<!-- Describe the tests you ran and how to reproduce them -->
-- [ ] Unit tests pass (`npm run test:unit`)
-- [ ] Integration tests pass (`npm run test:integration`)
-- [ ] Manual testing completed
-- [ ] Security scan passed
+## Broker Support
+Which brokers does this change affect?
+- [ ] Kite (Zerodha)
+- [ ] Groww
+- [ ] Dhan
+- [ ] All brokers
+- [ ] Not broker-specific
 
-## 🔒 Security Checklist
-<!-- Verify all security requirements are met -->
-- [ ] No hardcoded credentials, API keys, or secrets
-- [ ] All sensitive values use placeholder tokens (YOUR_*_HERE)
-- [ ] No personal URLs or identifiable information
-- [ ] Authentication logic properly reviewed
-- [ ] Input validation implemented where needed
-- [ ] Error handling doesn't expose sensitive information
+## Testing
+- [ ] I have tested this change locally
+- [ ] I have added/updated unit tests
+- [ ] I have added/updated integration tests
+- [ ] All existing tests pass
 
-## 🚀 Broker Changes (if applicable)
-<!-- If changes affect broker implementations -->
-- [ ] Kite broker tested
-- [ ] Groww broker tested  
-- [ ] Dhan broker tested
-- [ ] AngelOne broker tested
-- [ ] Authentication flows verified
-- [ ] API responses properly handled
+## Documentation
+- [ ] I have updated the README if needed
+- [ ] I have updated code comments
+- [ ] I have updated API documentation
 
-## 📊 Technical Analysis (if applicable)
-<!-- If changes affect technical indicators -->
-- [ ] Indicator calculations verified
-- [ ] Cross-broker compatibility maintained
-- [ ] Historical data handling correct
-- [ ] Performance impact assessed
+## Checklist
+- [ ] My code follows the existing code style
+- [ ] I have performed a self-review of my own code
+- [ ] My changes generate no new warnings
+- [ ] I have checked for potential security issues
+- [ ] Any dependent changes have been merged and published
 
-## ☁️ Cloudflare Workers (if applicable)
-<!-- If changes affect Cloudflare deployment -->
-- [ ] Worker deployment tested
-- [ ] KV storage operations verified
-- [ ] Rate limiting functionality works
-- [ ] Error handling for worker environment
-- [ ] Memory and CPU usage optimized
+## Related Issues
+Closes #(issue number)
 
-## 📖 Documentation
-- [ ] README.md updated (if needed)
-- [ ] Authentication guide updated (if needed)
-- [ ] API documentation updated (if needed)
-- [ ] Code comments added for complex logic
-
-## 🔗 Related Issues
-<!-- Link any related issues -->
-Fixes #(issue number)
-Relates to #(issue number)
-
-## 📝 Additional Notes
-<!-- Any additional information, warnings, or considerations -->
-
----
-
-## 🔍 Reviewer Guidelines
-
-### Security Review Focus:
-1. **Credential Safety**: Ensure no real API keys, tokens, or secrets
-2. **Authentication Logic**: Verify secure session handling
-3. **Input Validation**: Check for proper sanitization
-4. **Error Handling**: Ensure no sensitive data leakage
-
-### Code Quality Review:
-1. **Broker Compliance**: API implementations follow broker requirements
-2. **Error Handling**: Comprehensive error management
-3. **Testing**: Adequate test coverage
-4. **Documentation**: Clear and accurate documentation
-
-### Performance Review:
-1. **Memory Usage**: Efficient data structures
-2. **API Calls**: Minimize unnecessary requests
-3. **Caching**: Appropriate use of caching mechanisms
-4. **Cloudflare Limits**: Stays within worker constraints
+## Screenshots (if applicable)
+Add screenshots to help explain your changes.

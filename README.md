@@ -1,6 +1,39 @@
-# Setup
+# 🚀 TurtleStack Lite - Multi-Broker Trading MCP Server
 
-## Unified Trading Server (Recommended)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![MCP Server](https://img.shields.io/badge/MCP-Server-purple.svg)](https://modelcontextprotocol.io/)
+[![Trading API](https://img.shields.io/badge/Trading-API-orange.svg)](https://github.com/turtlehq-tech/turtlestack-lite)
+[![Kite Connect](https://img.shields.io/badge/Kite-Connect-red.svg)](https://kite.trade/)
+[![Groww API](https://img.shields.io/badge/Groww-API-blue.svg)](https://groww.in/)
+[![Dhan API](https://img.shields.io/badge/Dhan-API-green.svg)](https://dhan.co/)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange.svg)](https://workers.cloudflare.com/)
+[![Claude AI](https://img.shields.io/badge/Claude-AI-purple.svg)](https://claude.ai/)
+
+> **🏆 Most Advanced Multi-Broker Trading MCP Server for Claude AI** - Unified API for Kite (Zerodha), Groww, and Dhan with 40+ Technical Indicators, Real-time Trading, Portfolio Management, and Cloudflare Workers Support.
+
+## ✨ Features
+
+🎯 **Multi-Broker Support**: Seamlessly trade across Kite (Zerodha), Groww, and Dhan  
+📊 **Advanced Technical Analysis**: 40+ indicators including RSI, MACD, Bollinger Bands, VWAP, ATR  
+🔄 **Real-time Trading**: Live order placement, modification, and cancellation  
+💼 **Portfolio Management**: Unified portfolio tracking across all brokers  
+☁️ **Cloudflare Workers**: Deploy globally with edge computing  
+🤖 **Claude AI Integration**: Natural language trading commands  
+🔒 **Enterprise Security**: No stored credentials, session-based authentication  
+⚡ **High Performance**: Optimized for speed and reliability  
+🏗️ **Modular Architecture**: Easy to extend and customize  
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/turtlehq-tech/turtlestack-lite.git
+cd turtlestack-lite
+npm install
+npm start
+```
+
+### Claude AI Configuration
 
 The unified server supports all brokers (Kite, Groww, Dhan) with advanced technical analysis and modular architecture.
 
